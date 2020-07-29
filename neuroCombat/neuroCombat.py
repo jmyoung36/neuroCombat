@@ -8,7 +8,6 @@ import pandas as pd
 import numpy as np
 import numpy.linalg as la
 
-
 def neuroCombat(data,
                 covars,
                 batch_col,
@@ -157,7 +156,6 @@ def standardize_across_features(X, design, info_dict):
     n_batch = info_dict['n_batch']
     n_sample = info_dict['n_sample']
     sample_per_batch = info_dict['sample_per_batch']
-
     B_hat = np.dot(np.dot(la.inv(np.dot(design.T, design)), design.T), X.T)
     grand_mean = np.dot((sample_per_batch/ float(n_sample)).T, B_hat[:n_batch,:])
     var_pooled = np.dot(((X - np.dot(design, B_hat).T)**2), np.ones((n_sample, 1)) / float(n_sample))
@@ -182,6 +180,7 @@ def bprior(gamma_hat):
     return (m*s2+m**3)/s2
 
 def postmean(g_hat, g_bar, n, d_star, t2):
+    #import pdb; pdb.set_trace()
     return (t2*n*g_hat+d_star * g_bar) / (t2*n+d_star)
 
 def postvar(sum2, n, a, b):
@@ -193,7 +192,6 @@ def fit_LS_model_and_find_priors(s_data, design, info_dict):
     
     batch_design = design[:,:n_batch]
     gamma_hat = np.dot(np.dot(la.inv(np.dot(batch_design.T, batch_design)), batch_design.T), s_data.T)
-
     delta_hat = []
     for i, batch_idxs in enumerate(batch_info):
         delta_hat.append(np.var(s_data[:,batch_idxs],axis=1,ddof=1))
@@ -214,6 +212,7 @@ def fit_LS_model_and_find_priors(s_data, design, info_dict):
     return LS_dict
 
 def it_sol(sdat, g_hat, d_hat, g_bar, t2, a, b, conv=0.0001):
+    #import pdb; pdb.set_trace()
     n = (1 - np.isnan(sdat)).sum(axis=1)
     g_old = g_hat.copy()
     d_old = d_hat.copy()
